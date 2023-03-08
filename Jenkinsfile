@@ -11,11 +11,41 @@ pipeline {
                     branch: 'declarative'
             }
         }
+    }   
+        stage ('Artifactory configuration') {
+            steps {
+                rtServer (
+                    id: "ARTIFACTORY_SERVER",
+                    url: 'https://prakashdevops.jfrog.io/artifactory',
+                    credentialsId: 'JFROG_CLOUD_ADMIN'
+                )
+
+                rtMavenDeployer (
+                    id: "MAVEN_DEPLOYER",
+                    serverId: "ARTIFACTORY_SERVER",
+                    releaseRepo: 'libs-release',
+                    snapshotRepo: 'libs-snapshot'
+                )
+
+                rtMavenResolver (
+                    id: "MAVEN_RESOLVER",
+                    serverId: "ARTIFACTORY_SERVER",
+                    releaseRepo: 'libs-release',
+                    snapshotRepo: 'libs-snapshot'
+                )
+            }
+        }     
         stage('package') {
             tools {
                 jdk 'JDK_17'
             }
             steps {
+                rtMavenRun (
+                    tool: 'MAVEN_8',
+                    pom: 'pom.xml',
+                    goals: 'clean install',
+                    deployerId: "MAVEN_DEPLOYER"   
+                )
                 sh 'mvn package'
                 sh "mvn ${params.MAVEN_GOAL}"
             }
@@ -29,11 +59,25 @@ pipeline {
             }
         }
         stage('post build') {
-            steps {
+            steps { 
                 archiveArtifacts artifacts: '**/target/spring-petclinic-3.0.0-SNAPSHOT.jar',
                                  onlyIfSuccessful: true
                 junit testResults: '**/surefire-reports/TEST-*.xml'
             }
+    post {
+        success {
+            mail subject: "Jenkins Build of ${JOB_NAME} with build id $(Build ID) is success",
+            body: "Use this url ${BUILD_URL} for more info",
+            from: 'devops@gmail.com',
+            to: annemprakashreddy@gmail.com'
+            }
+        failure {
+            mail subject: "Jenkins Build of ${JOB_NAME} with build id $(Build ID) is failure",
+            body: "Use this url ${BUILD_URL} for more info",
+            from: 'devops@gmail.com',
+            to: annemprakashreddy@gmail.com'
+            }
         }
+        
     }
 }
