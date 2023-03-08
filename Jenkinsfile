@@ -11,7 +11,6 @@ pipeline {
                     branch: 'declarative'
             }
         }
-    }   
         stage ('Artifactory configuration') {
             steps {
                 rtServer (
@@ -34,7 +33,7 @@ pipeline {
                     snapshotRepo: 'libs-snapshot'
                 )
             }
-        }     
+        }
         stage('package') {
             tools {
                 jdk 'JDK_17'
@@ -44,25 +43,29 @@ pipeline {
                     tool: 'MAVEN_8',
                     pom: 'pom.xml',
                     goals: 'clean install',
-                    deployerId: "MAVEN_DEPLOYER"   
+                    deployerId: "MAVEN_DEPLOYER"
+                    
                 )
-                sh 'mvn package'
-                sh "mvn ${params.MAVEN_GOAL}"
+                rtPublishBuildInfo (
+                    serverId: "ARTIFACTORY_SERVER"
+                )
+                //sh "mvn ${params.MAVEN_GOAL}"
             }
         }
-        stage('sonar analysis') {
-            steps {
+        //stage('sonar analysis') {
+            //steps {
                 // performing sonarqube analysis with "withSonarQubeENV(<Name of Server configured in Jenkins>)"
-                withSonarQubeEnv('SONAR_CLOUD') {
-                    sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=prakashreddy_annem -Dsonar.organization=prakashreddy'
-                }
-            }
-        }
+                //withSonarQubeEnv('SONAR_CLOUD') {
+                    //sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=prakashreddy_annem -Dsonar.organization=prakashreddy'
+                //}
+            //}
+        //}
         stage('post build') {
-            steps { 
+            steps {
                 archiveArtifacts artifacts: '**/target/spring-petclinic-3.0.0-SNAPSHOT.jar',
                                  onlyIfSuccessful: true
                 junit testResults: '**/surefire-reports/TEST-*.xml'
             }
+        }
     }
 }
