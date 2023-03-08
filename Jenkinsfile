@@ -40,7 +40,7 @@ pipeline {
             }
             steps {
                 rtMavenRun (
-                    tool: 'MAVEN_8',
+                    tool: 'MVN_8',
                     pom: 'pom.xml',
                     goals: 'clean install',
                     deployerId: "MAVEN_DEPLOYER"
