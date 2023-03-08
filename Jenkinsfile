@@ -64,20 +64,5 @@ pipeline {
                                  onlyIfSuccessful: true
                 junit testResults: '**/surefire-reports/TEST-*.xml'
             }
-    post {
-        success {
-            mail subject: "Jenkins Build of ${JOB_NAME} with build id $(Build ID) is success",
-            body: "Use this url ${BUILD_URL} for more info",
-            from: 'devops@gmail.com',
-            to: annemprakashreddy@gmail.com'
-            }
-        failure {
-            mail subject: "Jenkins Build of ${JOB_NAME} with build id $(Build ID) is failure",
-            body: "Use this url ${BUILD_URL} for more info",
-            from: 'devops@gmail.com',
-            to: annemprakashreddy@gmail.com'
-            }
-        }
-        
     }
 }
