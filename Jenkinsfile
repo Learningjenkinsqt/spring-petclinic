@@ -19,7 +19,7 @@ pipeline {
                 junit testResults: '**/surefire-reports/TEST-*.xml'
             }
         }
-        stage('craeting folder') {
+        stage('craeting folder') {           
             steps {
                 sh "mkdir -p /tmp/${JOB_NAME}/${BUILD_ID}"
                 sh "cp -r **/spring-petclinic-*.jar /tmp/${JOB_NAME}/${BUILD_ID}"
