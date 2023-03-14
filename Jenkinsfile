@@ -25,6 +25,11 @@ pipeline {
                 sh "cp -r **/spring-petclinic-*.jar /tmp/${JOB_NAME}/${BUILD_ID}"
                 sh "aws s3 sync /tmp/${JOB_NAME}/${BUILD_ID} s3://reddyspcbucket --acl public-read-write"
             }
-        }    
+        }
+        stage('deploy') {
+            steps {
+                sh "ansible-playbook -i hosts springpetclinic.yml"
+            }
+        }
     }
 }
