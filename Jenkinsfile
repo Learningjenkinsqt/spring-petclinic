@@ -23,7 +23,7 @@ pipeline {
             steps {
                 sh "mkdir -p /tmp/${JOB_NAME}/${BUILD_ID}"
                 sh "cp -r **/spring-petclinic-*.jar /tmp/${JOB_NAME}/${BUILD_ID}"
-                sh "aws s3 sync /tmp/${JOB_NAME}/${BUILD_ID} s3://spcawsbucket -acl public read and write"
+                sh "aws s3 sync /tmp/${JOB_NAME}/${BUILD_ID} s3://spcawsbucket --acl public-read-write"
             }
         }    
     }
