@@ -10,7 +10,7 @@
     - name: copy the service the file
       copy:
         src: springpetclinic.service
-        dest: /etc/systemd/system/spc.service
+        dest: /etc/systemd/system/
         mode: "777"
     - name: daemon reload
       systemd:
