@@ -28,7 +28,7 @@ pipeline {
         }
         stage('deploy') {
             steps {
-                sh "ansible-playbook -i hosts springpetclinic.yml"
+                sh "ansible-playbook -i hosts ./springpetclinic.yml"
             }
         }
     }
